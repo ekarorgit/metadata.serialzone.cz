@@ -101,7 +101,10 @@
 
     <GetEpisodeList dest="8">
         <RegExp input="$$7" output="&lt;episodeguide&gt;\1&lt;/episodeguide&gt;" dest="8">
-            <RegExp input="$$1" output="\1&lt;title&gt;\2 (\3)&lt;/title&gt;\4" dest="7">
+            <RegExp conditional="szeorigname" input="$$1" output="\1&lt;title&gt;\2 (\3)&lt;/title&gt;&lt;originaltitle&gt;\3&lt;/originaltitle&gt;\4" dest="7">
+                <expression noclean="1,2,3,4" repeat="yes">(&lt;episode&gt;.*?)&lt;cz&gt;([^&lt;]*)&lt;/cz&gt;[^&lt;]*&lt;en&gt;([^&lt;]*)&lt;/en&gt;(.*?&lt;/episode&gt;)</expression>
+            </RegExp>
+            <RegExp conditional="!szeorigname" input="$$1" output="\1&lt;title&gt;\2&lt;/title&gt;&lt;originaltitle&gt;\3&lt;/originaltitle&gt;\4" dest="7">
                 <expression noclean="1,2,3,4" repeat="yes">(&lt;episode&gt;.*?)&lt;cz&gt;([^&lt;]*)&lt;/cz&gt;[^&lt;]*&lt;en&gt;([^&lt;]*)&lt;/en&gt;(.*?&lt;/episode&gt;)</expression>
             </RegExp>
             <expression noclean="1"/>
