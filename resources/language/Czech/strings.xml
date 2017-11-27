@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<strings>
+    <string id="10001">Zobrazovat puvodni nazev serialu v zavorce</string>
+    <string id="10002">Zobrazovat puvodni nazev epizody v zavorce</string>
+    <string id="10005">Stahovat mezinarodni media z TVDB</string>
+    <string id="10006">Preferovany jazyk pro TVDB</string>
+    <string id="10010">Stahovat lowres fallback plakat ze serialzone.cz</string>
+</strings>

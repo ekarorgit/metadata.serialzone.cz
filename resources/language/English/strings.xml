@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<strings>
+    <string id="10001">Show series original name in parenthesis</string>
+    <string id="10002">Show episode original name in parenthesis</string>
+    <string id="10005">Download international media from TVDB</string>
+    <string id="10006">Preffered language for TVDB</string>
+    <string id="10010">Download lowres fallback poster from serialzone.cz</string>
+</strings>
+

@@ -1,0 +1,16 @@
+[B]2.2[/B]
+[added] Spravne vezme serialzone url z nfo souboru
+[added] Uklada IMDBid do DB pro mozne pouziti v jinych pluginech
+[added] Primarne posters, series posters, banners, fanarts z TVDB
+[added] Moznost stahovani fallback poster ze serialzone (silena kvalita)
+[added] Fallback ostatnich medii ze serialzone
+[added] Moznost vypnout original nazev
+
+[B]2.1[/B]
+Premapovano na serialzone API
+
+[B]2.0alpha[/B]
+Upravy pro novy serialzone.cz
+
+[B]1.0alpha[/B]
+Initial revision for xbmc > 9.11

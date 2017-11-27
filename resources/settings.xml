@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<settings>
+  <setting label="10001" type="bool" id="szsorigname" default="true" />
+  <setting label="10002" type="bool" id="szeorigname" default="true" />
+  <setting label="10005" type="bool" id="szregional" default="true" />
+  <setting label="10006" type="select" values="bg|cs|da|de|el|es|fi|fr|he|hr|hu|it|ja|ko|nl|no|pl|pt|ru|sk|sl|sv|tr|zh" id="szregionallang" default="cs" enable="!eq(-1,false)" />
+  <setting label="10010" type="bool" id="szposter" default="false" />
+</settings>
