@@ -8,17 +8,23 @@
         </RegExp>
     </NfoUrl>
 
+	<!-- input : $$1=query string -->
+	<!-- output: <url>*</url> -->
     <CreateSearchUrl dest="8">
         <RegExp input="$$1" output="&lt;url cache=&quot;SZ.hledani-\1.xml&quot;&gt;http://api.serialzone.cz/xbmc/?co=\1&lt;/url&gt;" dest="8">
             <expression/>
         </RegExp>
     </CreateSearchUrl>
 
+	<!-- input : $$1=search html -->
+	<!-- input : $$2=search url -->
+	<!-- output: <results><entity><title>*</title><url>*</url></entity>*</results> -->
     <GetSearchResults dest="8">
         <XSLT input="$$1" output="\1" dest="8">
             <xsl:stylesheet version = "1.0"
-					xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+                        xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
                 <xsl:output encoding="UTF-8" indent="yes"/>
+                <xsl:strip-space elements="*"/>
                 <xsl:template match="data">
                     <results>
                         <xsl:apply-templates/>
@@ -27,91 +33,51 @@
                 <xsl:template match="tvshow">
                     <xsl:variable name="id" select="substring-before(substring-after(url, '/xbmc/serial/'), '/')"/>
                     <entity>
-                        <title>
-                            <xsl:value-of select="cz"/>
-                            <xsl:if test="not(en=cz)"> (<xsl:value-of select="en"/>)</xsl:if> (<xsl:value-of select="years"/>)</title>
-                        <url>
-                            <xsl:attribute name="cache">SZ.detail-<xsl:value-of select="$id"/>.xml</xsl:attribute>http://api.serialzone.cz/xbmc/serial/<xsl:value-of select="$id"/>/</url>
+                        <title><xsl:value-of select="cz"/><xsl:if test="not(en=cz)"> (<xsl:value-of select="en"/>)</xsl:if></title>
+                        <url><xsl:attribute name="cache">SZ.detail-<xsl:value-of select="$id"/>.xml</xsl:attribute>http://api.serialzone.cz/xbmc/serial/<xsl:value-of select="$id"/>/</url>
+                        <year><xsl:choose><xsl:when test="contains(years, '-')"><xsl:value-of select="substring-before(years, '-')"/></xsl:when><xsl:otherwise><xsl:value-of select="years"/></xsl:otherwise></xsl:choose></year>
                     </entity>
                 </xsl:template>                
             </xsl:stylesheet>
         </XSLT>
     </GetSearchResults>
 
+	<!-- input : $$1=series html -->
+	<!-- input : $$2=id -->
+	<!-- input : $$3=series url -->
+	<!-- output: <details><title>*</title><plot>*</plot><id>*</id>...etc...<episodeguide>*</episodeguide></details> -->
     <GetDetails dest="8">
-        <RegExp input="$$7" output="&lt;details&gt;\1&lt;/details&gt;" dest="8">
-            <!-- title -->
-            <RegExp input="$$1" output="\1" dest="2">
-                <expression>&lt;en&gt;([^&lt;]*)&lt;/en&gt;</expression>
-            </RegExp>
-            <RegExp input="$$6" output="&lt;title&gt;\1&lt;/title&gt;&lt;originaltitle&gt;$$2&lt;/originaltitle&gt;" dest="7+">
-                <RegExp input="$$1" output="\1" dest="6">
-                    <expression>&lt;cz&gt;([^&lt;]*)&lt;/cz&gt;</expression>
-                </RegExp>
-                <RegExp conditional="szsorigname" input="$$2" output=" (\1)" dest="6+">
-                    <expression noclean="1"/>
-                </RegExp>
-                <expression noclean="1"/>
-            </RegExp>
-            <!-- plot -->
-            <RegExp input="$$1" output="\1" dest="7+">
-                <expression noclean="1">(&lt;plot&gt;[^&lt;]*&lt;/plot&gt;)</expression>
-            </RegExp>
-            <!-- runtime -->
-            <RegExp input="$$1" output="\1" dest="7+">
-                <expression noclean="1">(&lt;runtime&gt;[^&lt;]*&lt;/runtime&gt;)</expression>
-            </RegExp>
-            <!-- genre -->
-            <RegExp input="$$1" output="\1" dest="7+">
-                <expression noclean="1" repeat="yes">(&lt;genre&gt;[^&lt;]*&lt;/genre&gt;)</expression>
-            </RegExp>
-            <!-- year -->
-            <RegExp input="$$1" output="&lt;premiered&gt;\1&lt;/premiered&gt;" dest="7+">
-                <expression noclean="1" repeat="yes">&lt;firstaired&gt;([^&lt;]*)&lt;/firstaired&gt;</expression>
-            </RegExp>
-            <RegExp input="$$1" output="&lt;year&gt;\1&lt;/year&gt;" dest="7+">
-                <expression noclean="1" repeat="yes">&lt;yearstart&gt;([^&lt;]*)&lt;/yearstart&gt;</expression>
-            </RegExp>
-            <!-- rating -->
-            <RegExp input="$$1" output="&lt;rating max=&quot;100&quot;&gt;\1&lt;/rating&gt;" dest="7+">
-                <expression noclean="1" repeat="yes">&lt;rating&gt;([^&lt;]*)&lt;/rating&gt;</expression>
-            </RegExp>
-            <!-- votes -->
-            <RegExp input="$$1" output="\1" dest="7+">
-                <expression noclean="1" repeat="yes">(&lt;votes&gt;[^&lt;]*&lt;/votes&gt;)</expression>
-            </RegExp>
-            <!-- country -->
-            <RegExp input="$$1" output="\1" dest="7+">
-                <expression noclean="1" repeat="yes">(&lt;country&gt;[^&lt;]*&lt;/country&gt;)</expression>
-            </RegExp>
-            <!-- actors -->
-            <RegExp input="$$1" output="\1" dest="7+">
-                <expression noclean="1" repeat="yes">(&lt;actor&gt;.*?&lt;/actor&gt;)</expression>
-            </RegExp>
-            <!-- credits -->
-            <RegExp input="$$1" output="&lt;credits&gt;\1&lt;/credits&gt;" dest="7+">
-                <expression noclean="1" repeat="yes">&lt;creator&gt;.*&lt;name&gt;(.*?)&lt;/name&gt;.*&lt;/creator&gt;</expression>
-            </RegExp>
-            <RegExp input="$$1" output="\1" dest="7+">
-                <expression noclean="1" repeat="yes">(&lt;episodeguide&gt;.*?&lt;/episodeguide&gt;)</expression>
-            </RegExp>
-            <!-- IMDBid -->
-            <RegExp input="$$1" output="\1" dest="2">
-                <expression clear="yes" noclean="1" trim="1">&lt;imdb&gt;([^&lt;]*)&lt;/imdb&gt;</expression>
-            </RegExp>
-            <RegExp input="$$2" output="&lt;id&gt;$$2&lt;/id&gt;" dest="7+">
-                <expression noclean="1" />
-            </RegExp>
-            <!-- dotazeni informaci z TVDB -->
-            <RegExp input="$$2" output="&lt;url function=&quot;GetTVDBSeries&quot; cache=&quot;TVDB.remote-$$2&quot;&gt;http://thetvdb.com/api/GetSeriesByRemoteID.php?imdbid=$$2&lt;/url&gt;" dest="7+">
-                <expression noclean="1"/>
-            </RegExp>
-            <!-- serialzone media -->
-            <RegExp input="$$1" output="&lt;url function=&quot;GetSZArt&quot; cache=&quot;SZ.detail-\1.xml&quot;&gt;http://api.serialzone.cz/xbmc/serial/\1/&lt;/url&gt;" dest="7+">
-                <expression noclean="1" repeat="yes">&lt;episodeguide&gt;https?://api.serialzone.cz/xbmc/serial/([^/]+)/epizody/&lt;/episodeguide&gt;</expression>
-            </RegExp>
-            <expression noclean="1"/>
-        </RegExp>
+        <XSLT input="$$1" output="\1" dest="8">
+            <xsl:stylesheet version = "1.0"
+					xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+                <xsl:output encoding="UTF-8" indent="yes"/>
+				<xsl:strip-space elements="*"/>
+                <xsl:template match="data">
+                    <xsl:variable name="id" select="substring-before(substring-after('$$3', '/xbmc/serial/'), '/')"/>
+                    <details>
+                        <title><xsl:value-of select="cz"/><xsl:if test="'$INFO[szsorigname]' = 'true' and not(cz = en)"> (<xsl:value-of select="en"/>)</xsl:if></title>
+                        <originaltitle><xsl:value-of select="en"/></originaltitle>
+                        <id><xsl:value-of select="imdb"/></id>
+                        <uniqueid><xsl:attribute name="type">imdb</xsl:attribute><xsl:value-of select="imdb"/></uniqueid>
+                        <xsl:copy-of select="plot"/>
+                        <xsl:copy-of select="runtime"/>
+                        <xsl:copy-of select="genres/*"/>
+                        <premiered><xsl:value-of select="firstaired"/></premiered>
+                        <year><xsl:value-of select="yearstart"/></year>
+                        <rating><xsl:attribute name="max">100</xsl:attribute><xsl:value-of select="rating"/></rating>
+                        <xsl:copy-of select="votes"/>
+                        <xsl:copy-of select="countries/*"/>
+                        <xsl:copy-of select="actors/*"/>
+                        <xsl:for-each select="creators/creator">
+                            <credits><xsl:value-of select="name"/></credits>
+                        </xsl:for-each>
+                        <xsl:copy-of select="episodeguide"/>
+                        <url><xsl:attribute name="function">GetTVDBSeries</xsl:attribute><xsl:attribute name="cache">TVDB.remote-<xsl:value-of select="imdb"/></xsl:attribute>http://thetvdb.com/api/GetSeriesByRemoteID.php?imdbid=<xsl:value-of select="imdb"/></url>
+                        <url><xsl:attribute name="function">GetSZArt</xsl:attribute><xsl:attribute name="cache">SZ.detail-<xsl:value-of select="$id"/>.xml</xsl:attribute>$$3</url>
+                    </details>
+                </xsl:template>
+            </xsl:stylesheet>
+        </XSLT>
     </GetDetails>
 
     <GetEpisodeList dest="8">
