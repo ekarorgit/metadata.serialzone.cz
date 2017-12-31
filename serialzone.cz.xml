@@ -64,11 +64,16 @@
                             <credits><xsl:value-of select="name"/></credits>
                         </xsl:for-each>
                         <xsl:copy-of select="plot|runtime|votes|director|genres/*|countries/*|actors/*|episodeguide"/>
-                        <xsl:if test="imdb and not(imdb = 'tt0000000')">
-                            <id><xsl:value-of select="imdb"/></id>
-                            <uniqueid><xsl:attribute name="type">imdb</xsl:attribute><xsl:value-of select="imdb"/></uniqueid>
-                            <url><xsl:attribute name="function">GetTVDBSeries</xsl:attribute><xsl:attribute name="cache">TVDB.remote-<xsl:value-of select="imdb"/></xsl:attribute>http://thetvdb.com/api/GetSeriesByRemoteID.php?imdbid=<xsl:value-of select="imdb"/></url>
-                        </xsl:if>
+                        <xsl:choose>
+                            <xsl:when test="imdb and not(imdb = 'tt0000000')">
+                                <id><xsl:value-of select="imdb"/></id>
+                                <uniqueid><xsl:attribute name="type">imdb</xsl:attribute><xsl:value-of select="imdb"/></uniqueid>
+                                <chain><xsl:attribute name="function">GetTVDBArt</xsl:attribute><xsl:value-of select="imdb"/></chain>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:comment>Missing imdbid, so no data from TVDB</xsl:comment>
+                            </xsl:otherwise>
+                        </xsl:choose>
                         <url><xsl:attribute name="function">GetSZArt</xsl:attribute><xsl:attribute name="cache">SZ.detail-<xsl:value-of select="$id"/>.xml</xsl:attribute>$$3</url>
                     </details>
                 </xsl:template>
@@ -134,66 +139,6 @@
         </XSLT>
     </GetEpisodeDetails>
 
-    <GetTVDBSeries dest="8">
-        <RegExp input="$$1" output="&lt;details&gt;&lt;url function=&quot;GetTVDBArt&quot; cache=&quot;TVDB.series-\1.xml&quot;&gt;http://thetvdb.com/api/1D62F2F90030C444/series/\1/banners.xml&lt;/url&gt;&lt;/details&gt;" dest="8">
-            <expression noclean="1">&lt;seriesid&gt;([0-9]*)&lt;/seriesid&gt;</expression>
-        </RegExp>
-    </GetTVDBSeries>
-
-    <GetTVDBArt dest="8">
-        <RegExp input="$$7" output="&lt;details&gt;\1&lt;/details&gt;" dest="8">
-
-            <!-- poster -->
-            <RegExp conditional="szregional" input="$$1" output="&lt;thumb aspect=&quot;poster&quot; language=&quot;$INFO[szregionallang]&quot;&gt;http://thetvdb.com/banners/\1&lt;/thumb&gt;" dest="7+">
-                <expression repeat="yes">&lt;BannerPath&gt;([^&lt;]*)&lt;/BannerPath&gt;[^&lt;]*&lt;BannerType&gt;poster&lt;/BannerType&gt;[^&lt;]*&lt;BannerType2&gt;[^&lt;]*&lt;/BannerType2&gt;[^&lt;]*&lt;Language&gt;\Q$INFO[szregionallang]\E&lt;/Language&gt;</expression>
-            </RegExp>
-            <RegExp input="$$1" output="&lt;thumb aspect=&quot;poster&quot; language=&quot;en&quot;&gt;http://thetvdb.com/banners/\1&lt;/thumb&gt;" dest="7+">
-                <expression repeat="yes">&lt;BannerPath&gt;([^&lt;]*)&lt;/BannerPath&gt;[^&lt;]*&lt;BannerType&gt;poster&lt;/BannerType&gt;[^&lt;]*&lt;BannerType2&gt;[^&lt;]*&lt;/BannerType2&gt;[^&lt;]*&lt;Language&gt;en&lt;/Language&gt;</expression>
-            </RegExp>
-            <!-- season poster --> 
-            <RegExp conditional="szregional" input="$$1" output="&lt;thumb aspect=&quot;poster&quot; type=&quot;season&quot; season=&quot;\2&quot; language=&quot;$INFO[szregionallang]&quot;&gt;http://thetvdb.com/banners/\1&lt;/thumb&gt;" dest="7+">
-                <expression repeat="yes">&lt;BannerPath&gt;([^&lt;]*)&lt;/BannerPath&gt;[^&lt;]*&lt;BannerType&gt;season&lt;/BannerType&gt;[^&lt;]*&lt;BannerType2&gt;season&lt;/BannerType2&gt;[^&lt;]*&lt;Language&gt;\Q$INFO[szregionallang]\E&lt;/Language&gt;(?:[^&lt;]*&lt;/?Rating&gt;)*(?:[^&lt;]*&lt;/?Ratingcount&gt;)*[^&lt;]*&lt;Season&gt;([0-9]+)&lt;/Season&gt;</expression>
-            </RegExp>
-            <RegExp input="$$1" output="&lt;thumb aspect=&quot;poster&quot; type=&quot;season&quot; season=&quot;\2&quot; language=&quot;en&quot;&gt;http://thetvdb.com/banners/\1&lt;/thumb&gt;" dest="7+">
-                <expression repeat="yes">&lt;BannerPath&gt;([^&lt;]*)&lt;/BannerPath&gt;[^&lt;]*&lt;BannerType&gt;season&lt;/BannerType&gt;[^&lt;]*&lt;BannerType2&gt;season&lt;/BannerType2&gt;[^&lt;]*&lt;Language&gt;en&lt;/Language&gt;(?:[^&lt;]*&lt;/?Rating&gt;)*(?:[^&lt;]*&lt;/?Ratingcount&gt;)*[^&lt;]*&lt;Season&gt;([0-9]+)&lt;/Season&gt;</expression>
-            </RegExp>
-            <!-- banner -->
-            <RegExp conditional="szregional" input="$$1" output="&lt;thumb aspect=&quot;banner&quot; language=&quot;$INFO[szregionallang]&quot;&gt;http://thetvdb.com/banners/\1&lt;/thumb&gt;" dest="7+">
-                <expression repeat="yes">&lt;BannerPath&gt;([^&lt;]*)&lt;/BannerPath&gt;[^&lt;]*&lt;BannerType&gt;series&lt;/BannerType&gt;[^&lt;]*&lt;BannerType2&gt;graphical&lt;/BannerType2&gt;[^&lt;]*&lt;Language&gt;\Q$INFO[szregionallang]\E&lt;/Language&gt;</expression>
-            </RegExp>
-            <RegExp input="$$1" output="&lt;thumb aspect=&quot;banner&quot; language=&quot;en&quot;&gt;http://thetvdb.com/banners/\1&lt;/thumb&gt;" dest="7+">
-                <expression repeat="yes">&lt;BannerPath&gt;([^&lt;]*)&lt;/BannerPath&gt;[^&lt;]*&lt;BannerType&gt;series&lt;/BannerType&gt;[^&lt;]*&lt;BannerType2&gt;graphical&lt;/BannerType2&gt;[^&lt;]*&lt;Language&gt;en&lt;/Language&gt;</expression>
-            </RegExp>
-            <RegExp conditional="szregional" input="$$1" output="&lt;thumb aspect=&quot;banner&quot; language=&quot;$INFO[szregionallang]&quot;&gt;http://thetvdb.com/banners/\1&lt;/thumb&gt;" dest="7+">
-                <expression repeat="yes">&lt;BannerPath&gt;([^&lt;]*)&lt;/BannerPath&gt;[^&lt;]*&lt;BannerType&gt;series&lt;/BannerType&gt;[^&lt;]*&lt;BannerType2&gt;text&lt;/BannerType2&gt;[^&lt;]*&lt;Language&gt;\Q$INFO[szregionallang]\E&lt;/Language&gt;</expression>
-            </RegExp>
-            <RegExp input="$$1" output="&lt;thumb aspect=&quot;banner&quot; language=&quot;en&quot;&gt;http://thetvdb.com/banners/\1&lt;/thumb&gt;" dest="7+">
-                <expression repeat="yes">&lt;BannerPath&gt;([^&lt;]*)&lt;/BannerPath&gt;[^&lt;]*&lt;BannerType&gt;series&lt;/BannerType&gt;[^&lt;]*&lt;BannerType2&gt;text&lt;/BannerType2&gt;[^&lt;]*&lt;Language&gt;en&lt;/Language&gt;</expression>
-            </RegExp>
-            <RegExp input="$$1" output="&lt;thumb aspect=&quot;banner&quot;&gt;http://thetvdb.com/banners/\1&lt;/thumb&gt;" dest="7+">
-                <expression repeat="yes">&lt;BannerPath&gt;([^&lt;]*)&lt;/BannerPath&gt;[^&lt;]*&lt;BannerType&gt;series&lt;/BannerType&gt;[^&lt;]*&lt;BannerType2&gt;blank&lt;/BannerType2&gt;</expression>
-            </RegExp>
-            <!-- season banner -->
-            <RegExp conditional="szregional" input="$$1" output="&lt;thumb aspect=&quot;banner&quot; type=&quot;season&quot; season=&quot;\2&quot; language=&quot;$INFO[szregionallang]&quot;&gt;http://thetvdb.com/banners/\1&lt;/thumb&gt;" dest="7+">
-                <expression repeat="yes">&lt;BannerPath&gt;([^&lt;]*)&lt;/BannerPath&gt;[^&lt;]*&lt;BannerType&gt;season&lt;/BannerType&gt;[^&lt;]*&lt;BannerType2&gt;seasonwide&lt;/BannerType2&gt;[^&lt;]*&lt;Language&gt;\Q$INFO[szregionallang]\E&lt;/Language&gt;[^&lt;]*.*?&lt;Season&gt;([0-9]+)&lt;/Season&gt;</expression>
-            </RegExp>
-            <RegExp input="$$1" output="&lt;thumb aspect=&quot;banner&quot; type=&quot;season&quot; season=&quot;\2&quot; language=&quot;en&quot;&gt;http://thetvdb.com/banners/\1&lt;/thumb&gt;" dest="7+">
-                <expression repeat="yes">&lt;BannerPath&gt;([^&lt;]*)&lt;/BannerPath&gt;[^&lt;]*&lt;BannerType&gt;season&lt;/BannerType&gt;[^&lt;]*&lt;BannerType2&gt;seasonwide&lt;/BannerType2&gt;[^&lt;]*&lt;Language&gt;en&lt;/Language&gt;[^&lt;]*.*?&lt;Season&gt;([0-9]+)&lt;/Season&gt;</expression>
-            </RegExp>
-            <!-- fanart -->
-            <RegExp input="$$6" output="&lt;fanart url=&quot;http://thetvdb.com/banners/&quot;&gt;\1&lt;/fanart&gt;" dest="7+">
-                <RegExp conditional="szregional" input="$$1" output="&lt;thumb dim=&quot;\2&quot; colors=&quot;\3&quot; preview=&quot;_cache/\1&quot; language=&quot;$INFO[szregionallang]&quot;&gt;\1&lt;/thumb&gt;" dest="6">
-                    <expression repeat="yes">&lt;BannerPath&gt;([^&lt;]*)&lt;/BannerPath&gt;[^&lt;]*&lt;BannerType&gt;fanart&lt;/BannerType&gt;[^&lt;]*&lt;BannerType2&gt;([^&lt;]*)&lt;/BannerType2&gt;[^&lt;]*&lt;Colors(?:/|&gt;[^&lt;]*&lt;/Colors)&gt;[^&lt;]*&lt;Language&gt;\Q$INFO[szregionallang]\E&lt;/Language&gt;</expression>
-                </RegExp>
-                <RegExp input="$$1" output="&lt;thumb dim=&quot;\2&quot; colors=&quot;\3&quot; preview=&quot;_cache/\1&quot; language=&quot;en&quot;&gt;\1&lt;/thumb&gt;" dest="6+">
-                    <expression repeat="yes">&lt;BannerPath&gt;([^&lt;]*)&lt;/BannerPath&gt;[^&lt;]*&lt;BannerType&gt;fanart&lt;/BannerType&gt;[^&lt;]*&lt;BannerType2&gt;([^&lt;]*)&lt;/BannerType2&gt;[^&lt;]*&lt;Colors(?:/|&gt;[^&lt;]*&lt;/Colors)&gt;[^&lt;]*&lt;Language&gt;en&lt;/Language&gt;</expression>
-                </RegExp>
-                <expression noclean="1"/>
-            </RegExp>
-            <expression noclean="1"/>
-        </RegExp> 
-    </GetTVDBArt>
-
     <GetSZArt dest="8">
         <XSLT input="$$1" output="\1" dest="8">
             <xsl:stylesheet version = "1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
@@ -206,7 +151,9 @@
                     </details>
                 </xsl:template>
                 <xsl:template match="poster">
-                    <thumb><xsl:attribute name="aspect">poster</xsl:attribute><xsl:value-of select="."/></thumb>
+                    <xsl:if test="'$INFO[szposter]' = 'true'">
+                        <thumb><xsl:attribute name="aspect">poster</xsl:attribute><xsl:value-of select="."/></thumb>
+                    </xsl:if>
                 </xsl:template>
                 <xsl:template match="banners">
                     <xsl:apply-templates/>
@@ -229,4 +176,202 @@
             </xsl:stylesheet>
         </XSLT>        
     </GetSZArt>
+   
+	<!-- input : $$1=IMDBid -->
+	<!-- output: $$17=IMDBid -->
+	<!-- output: <details><url>...</url></detials> -->
+    <GetTVDBArt dest="3" clearbuffers="no">
+        <RegExp input="$$4" output="&lt;details&gt;\1&lt;/details&gt;" dest="3">
+            <RegExp input="$$1" output="&lt;url function=&quot;GetTVDBArtAuth&quot; post=&quot;yes&quot; cache=&quot;auth.json&quot;&gt;https://api.thetvdb.com/login?{&quot;apikey&quot;:&quot;92B392A21386A7AB&quot;}|Content-Type=application/json" dest="4">
+                <expression/>
+            </RegExp>
+            <RegExp input="" output="$$1" dest="17">
+                <expression/>
+            </RegExp>
+            <expression noclean="1"/>
+        </RegExp>
+    </GetTVDBArt>
+
+	<!-- input : $$1= language to switch -->
+	<!-- output: $$16= switched language -->
+	<!-- output: <details>comment with switch</detials> -->
+	<SwitchLanguage dest="3" clearbuffers="no">
+		<RegExp input="" output="&lt;details&gt;&lt;!-- switching language from $$16 to $$1 --&gt;&lt;/details&gt;" dest="3">
+			<expression noclean="1"/>
+		</RegExp>
+        <RegExp input="$$1" output="\1" dest="16">
+            <expression/>
+        </RegExp>
+	</SwitchLanguage>
+
+	<!-- input : $$1=auth token json -->
+	<!-- input : $$17=IMDBid -->
+	<!-- output: $$19=auth_token with "Bearer " prefix -->
+	<!-- output: <details><url>...</url></detials> -->
+    <GetTVDBArtAuth dest="3" clearbuffers="no">
+        <RegExp input="$$1" output="Bearer \1" dest="19">
+            <expression>"token": "(.*)"</expression>
+        </RegExp>
+        <RegExp input="$$4" output="&lt;details&gt;\1&lt;/details&gt;" dest="3">
+            <RegExp input="" output="&lt;url function=&quot;GetTVDBId&quot; cache=&quot;$$17-search-id.json&quot;&gt;https://api.thetvdb.com/search/series?imdbId=$$17|Authorization=$$19&lt;/url&gt;" dest="4">
+                <expression/>
+            </RegExp>
+            <expression noclean="1"/>
+        </RegExp>
+    </GetTVDBArtAuth>
+
+	<!-- input : $$1=search result json -->
+	<!-- input : $$17=IMDBid -->
+	<!-- input : $$19=auth_token with "Bearer " prefix -->
+    <!-- output: $$10="" -->
+    <!-- output: $$18=TVDBId -->
+	<!-- output: <details><url>...</url><chain>...</chain></detials> -->
+    <GetTVDBId dest="3" clearbuffers="no">
+        <RegExp input="$$1" output="\1" dest="18">
+            <expression clear="yes">"id": (\d+),</expression>
+        </RegExp>
+        <RegExp input="" output="" dest="10">
+            <expression/>
+        </RegExp>
+        <RegExp input="$$4" output="&lt;details&gt;\1&lt;/details&gt;" dest="3">
+            <RegExp input="" output="&lt;!-- Cannot find TVDBid from IMDBid $$17 --&gt;" dest="4">
+                <expression/>
+            </RegExp>
+            <!-- not continue if missing tvdbid -->
+            <RegExp input="$$18" output="$$5" dest="4">
+                <RegExp input="" output="&lt;url function=&quot;GetTVDBArtParams&quot; cache=&quot;$$18-art-params.json&quot;&gt;https://api.thetvdb.com/series/$$18/images/query/params|Authorization=$$19&lt;/url&gt;" dest="5">
+                    <expression/>
+                </RegExp>
+                <RegExp input="" output="&lt;chain function=&quot;ParseTVDBArt&quot;&gt;&lt;/chain&gt;" dest="5+">
+                    <expression/>
+                </RegExp>
+                <expression clear="yes">(\d+)</expression>
+            </RegExp>
+            <expression noclean="1"/>
+        </RegExp>
+    </GetTVDBId>
+    
+	<!-- input : $$1=image query params json -->
+	<!-- input : $$17=IMDBid -->
+    <!-- input : $$18=TVDBId -->
+	<!-- input : $$19=auth_token with "Bearer " prefix -->
+	<!-- output: $$16=actual language -->
+	<!-- output: <details><url>...$INFO[szregionallang]</url><url>...en</url></detials> -->
+    <GetTVDBArtParams dest="3" clearbuffers="no">
+        <RegExp input="$$4" output="&lt;details&gt;\1&lt;/details&gt;" dest="3">
+            <RegExp conditional="szregional" input="" output="$INFO[szregionallang]" dest="16">
+                <expression/>
+            </RegExp>
+            <RegExp conditional="szregional" input="$$1" output="&lt;url function=&quot;LoadTVDBArt&quot; cache=&quot;$$18-art-\1-$$16.json&quot;&gt;https://api.thetvdb.com/series/$$18/images/query?keyType=\1|Authorization=$$19&amp;accept-language=$$16&lt;/url&gt;" dest="4">
+                <expression clear="yes" repeat="yes">"keyType": "([^"]+)"</expression>
+            </RegExp>
+            <RegExp input="" output="&lt;chain function=&quot;SwitchLanguage&quot;&gt;en&lt;/chain&gt;" dest="4+">
+                <expression noclean="1"/>
+            </RegExp>
+            <RegExp input="$$1" output="&lt;url function=&quot;LoadTVDBArt&quot; cache=&quot;$$18-art-\1-en.json&quot;&gt;https://api.thetvdb.com/series/$$18/images/query?keyType=\1|Authorization=$$19&amp;accept-language=en&lt;/url&gt;" dest="4+">
+                <expression repeat="yes">"keyType": "([^"]+)"</expression>
+            </RegExp>
+            <expression noclean="1"/>
+        </RegExp>
+    </GetTVDBArtParams>
+
+	<!-- input : $$1=image query result json -->
+	<!-- input : $$16=actual language -->
+	<!-- input : $$17=IMDBid -->
+    <!-- input : $$18=TVDBId -->
+	<!-- input : $$19=auth_token with "Bearer " prefix -->
+	<!-- output: $$10=XML with images from result -->
+	<!-- output: <details>comment with type</detials> -->
+    <LoadTVDBArt dest="3" clearbuffers="no">		
+        <RegExp input="$$1" output="&lt;details&gt;&lt;!-- $$16 \1 loaded --&gt;&lt;/details&gt;" dest="3">
+            <RegExp input="$$1" output="&lt;Banner&gt;&lt;id&gt;\1&lt;/id&gt;&lt;keyType&gt;\2&lt;/keyType&gt;&lt;subKey&gt;\3&lt;/subKey&gt;&lt;fileName&gt;\4&lt;/fileName&gt;&lt;resolution&gt;\5&lt;/resolution&gt;&lt;average&gt;\6&lt;/average&gt;&lt;thumbnail&gt;\7&lt;/thumbnail&gt;&lt;language&gt;$$16&lt;/language&gt;&lt;/Banner&gt;" dest="10+">
+                <expression repeat="yes">"id": (\d+),\s+"keyType": "([^"]+)",\s+"subKey": "([^"]*)",\s+"fileName": "([^"]+)",\s+"resolution": "([^"]*)",\s+"ratingsInfo": {\s+"average": (?:([\d\.]+)|null),\s+"count": \d+\s+},\s+"thumbnail": "([^"]+)"</expression>
+            </RegExp>
+            <expression noclean="1">"keyType": "([^"]+)",</expression>
+        </RegExp>
+    </LoadTVDBArt>
+
+	<!-- input : $$1=chain call - empty -->
+	<!-- input : $$16=actual language -->
+	<!-- input : $$17=IMDBid -->
+    <!-- input : $$18=TVDBId -->
+	<!-- input : $$19=auth_token with "Bearer " prefix -->
+	<!-- input : $$10=XML with images from LoadTVDBArt result -->
+	<!-- output: <details><thumb>...</thumb></detials> -->
+    <ParseTVDBArt dest="4" clearbuffers="no">
+        <RegExp input="" output="" dest="4">
+            <expression/>
+        </RegExp>
+        <XSLT input="&lt;Banners&gt;$$10&lt;/Banners&gt;" output="\1" dest="4">
+            <xsl:stylesheet version = "1.0"
+                    xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+                <xsl:output omit-xml-declaration="yes" indent="yes"/>
+                <xsl:strip-space elements="*"/>
+                <xsl:key name="BannersById" match="Banner" use="id"/>
+
+                <xsl:template match="Banners">
+                    <details>
+                        <fanart url="http://www.thetvdb.com/banners/">
+                            <xsl:apply-templates select="Banner[(keyType='fanart') and (generate-id()=generate-id(key('BannersById', id)[1]))]">
+                                <xsl:sort data-type="number" order="descending" select="average"/>
+                            </xsl:apply-templates>
+                        </fanart>
+                        <xsl:apply-templates select="Banner[(keyType!='fanart') and (generate-id()=generate-id(key('BannersById', id)[1]))]">
+                            <xsl:sort data-type="number" order="ascending" select="(1 * number(keyType='poster'))
+                                                                                +  (2 * number(keyType='series'))
+                                                                                +  (3 * number(keyType='season'))
+                                                                                +  (4 * number(keyType='seasonwide'))"/>
+                            <xsl:sort data-type="number" order="ascending" select="(1 * number(subKey='graphical'))
+                                                                                +  (2 * number(subKey='text'))
+                                                                                +  (3 * number(subKey='blank'))
+                                                                                +  (4 * number(subKey))"/>
+                            <xsl:sort data-type="number" order="ascending" select="(1 * number(language='$INFO[szregionallang]'))
+                                                                                +  (2 * number(language='en'))"/>
+                            <xsl:sort data-type="number" order="descending" select="average"/>
+                        </xsl:apply-templates>
+                        <xsl:apply-templates select="Banner[((keyType='poster') or (keyType='series')) and (generate-id()=generate-id(key('BannersById', id)[1]))]" mode="allseasons"/>
+                    </details>
+                </xsl:template>
+
+                <xsl:template match="Banner[keyType='fanart']">
+                    <thumb>
+                        <xsl:attribute name="dim"><xsl:value-of select="resolution"/></xsl:attribute>
+                        <xsl:attribute name="preview"><xsl:value-of select="thumbnail"/></xsl:attribute>
+                        <xsl:value-of select="fileName"/>
+                    </thumb>
+                </xsl:template>
+
+                <xsl:template match="Banner">
+                    <thumb>
+                        <xsl:attribute name="aspect">
+                            <xsl:choose>
+                                <xsl:when test="(keyType='poster') or (keyType='season')">poster</xsl:when>
+                                <xsl:otherwise>banner</xsl:otherwise>
+                            </xsl:choose>
+                        </xsl:attribute>
+                        <xsl:if test="(keyType='season') or (keyType='seasonwide')">
+                            <xsl:attribute name="type">season</xsl:attribute>
+                            <xsl:attribute name="season"><xsl:value-of select="subKey"/></xsl:attribute>
+                        </xsl:if>
+                        <xsl:attribute name="language"><xsl:value-of select="language"/></xsl:attribute>http://www.thetvdb.com/banners/<xsl:value-of select="fileName"/>
+                    </thumb>
+                </xsl:template>
+
+                <xsl:template match="Banner" mode="allseasons">
+                    <thumb>
+                        <xsl:attribute name="aspect">
+                            <xsl:choose>
+                                <xsl:when test="(keyType='poster')">poster</xsl:when>
+                                <xsl:otherwise>banner</xsl:otherwise>
+                            </xsl:choose>
+                        </xsl:attribute>
+                        <xsl:attribute name="type">season</xsl:attribute>
+                        <xsl:attribute name="season">-1</xsl:attribute>
+                        <xsl:attribute name="language"><xsl:value-of select="language"/></xsl:attribute>http://www.thetvdb.com/banners/<xsl:value-of select="fileName"/></thumb>
+                </xsl:template>
+
+            </xsl:stylesheet>
+        </XSLT>
+    </ParseTVDBArt>
+
 </scraper>
