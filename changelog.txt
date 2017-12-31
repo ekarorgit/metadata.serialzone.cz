@@ -1,3 +1,9 @@
+[B]2.3[/B]
+[changed] XSLT pro parsovani serialzone API
+[changed] TheTVDB API 2.0 pro media
+[changed] Pokud je nazev v cz a en stejny, tak se nezobrazuje v zavorce
+[added]   Vyhledavani nove uprednostnuje rok z nazvu slozky
+  
 [B]2.2[/B]
 [added] Spravne vezme serialzone url z nfo souboru
 [added] Uklada IMDBid do DB pro mozne pouziti v jinych pluginech

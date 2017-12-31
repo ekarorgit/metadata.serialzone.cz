@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addon id="metadata.serialzone.cz"
        name="SerialZone.cz"
-       version="2.2"
+       version="2.3"
        provider-name="ekarorgit">
     <requires>
         <import addon="xbmc.metadata" version="2.1.0"/>
@@ -21,13 +21,19 @@
         <website>www.github.com/ekarorgit/metadata.serialzone.cz</website>
         <email/>
         <source>www.github.com/ekarorgit/metadata.serialzone.cz</source>
-        <news>v 2.2 (27.11.2017)
-[added] Spravne vezme serialzone url z nfo souboru
-[added] Uklada IMDBid do DB pro mozne pouziti v jinych pluginech
-[added] Primarne posters, series posters, banners, fanarts z TVDB
-[added] Moznost stahovani fallback poster ze serialzone (silena kvalita)
-[added] Fallback ostatnich medii ze serialzone
-[added] Moznost vypnout original nazev
+        <news>v 2.3 (2.1.2018)
+  [changed] XSLT pro parsovani serialzone API
+  [changed] TheTVDB API 2.0 pro media
+  [changed] Pokud je nazev v cz a en stejny, tak se nezobrazuje v zavorce
+  [added]   Vyhledavani nove uprednostnuje rok z nazvu slozky
+  
+v 2.2 (27.11.2017)
+  [added] Spravne vezme serialzone url z nfo souboru
+  [added] Uklada IMDBid do DB pro mozne pouziti v jinych pluginech
+  [added] Primarne posters, series posters, banners, fanarts z TVDB
+  [added] Moznost stahovani fallback poster ze serialzone (silena kvalita)
+  [added] Fallback ostatnich medii ze serialzone
+  [added] Moznost vypnout original nazev
         </news>
         <assets>
             <icon>icon.png</icon>
