@@ -54,9 +54,17 @@
 				<xsl:strip-space elements="*"/>
                 <xsl:template match="data">
                     <xsl:variable name="id" select="substring-before(substring-after('$$3', '/xbmc/serial/'), '/')"/>
+                    <xsl:variable name="entitle" select="normalize-space(en)"/>
                     <details>
-                        <title><xsl:value-of select="cz"/><xsl:if test="'$INFO[szsorigname]' = 'true' and not(cz = en)"> (<xsl:value-of select="en"/>)</xsl:if></title>
-                        <originaltitle><xsl:value-of select="en"/></originaltitle>
+                        <xsl:choose>
+                            <xsl:when test="'$INFO[szsengname]' = 'true'">
+                                <title><xsl:value-of select="$entitle"/></title>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <title><xsl:value-of select="normalize-space(cz)"/><xsl:if test="'$INFO[szsorigname]' = 'true' and not(cz = en)"> (<xsl:value-of select="$entitle"/>)</xsl:if></title>
+                                <originaltitle><xsl:value-of select="$entitle"/></originaltitle>
+                            </xsl:otherwise>
+                        </xsl:choose>
                         <premiered><xsl:value-of select="firstaired"/></premiered>
                         <year><xsl:value-of select="yearstart"/></year>
                         <rating><xsl:attribute name="max">100</xsl:attribute><xsl:value-of select="rating"/></rating>
@@ -66,7 +74,6 @@
                         <xsl:copy-of select="plot|runtime|votes|director|genres/*|countries/*|actors/*|episodeguide"/>
                         <xsl:choose>
                             <xsl:when test="imdb and not(imdb = 'tt0000000')">
-                                <id><xsl:value-of select="imdb"/></id>
                                 <uniqueid><xsl:attribute name="type">imdb</xsl:attribute><xsl:value-of select="imdb"/></uniqueid>
                                 <chain><xsl:attribute name="function">GetTVDBArt</xsl:attribute><xsl:value-of select="imdb"/></chain>
                             </xsl:when>
@@ -95,8 +102,17 @@
                     </episodeguide>
                 </xsl:template>
                 <xsl:template match="episode">
+                    <xsl:variable name="entitle" select="normalize-space(en)"/>
                     <episode>
-                        <title><xsl:value-of select="cz"/><xsl:if test="'$INFO[szeorigname]' = 'true' and not(cz = en)"> (<xsl:value-of select="en"/>)</xsl:if></title>
+                        <xsl:choose>
+                            <xsl:when test="'$INFO[szeengname]' = 'true'">
+                                <title><xsl:value-of select="$entitle"/></title>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <title><xsl:value-of select="normalize-space(cz)"/><xsl:if test="'$INFO[szeorigname]' = 'true' and not(cz = en)"> (<xsl:value-of select="$entitle"/>)</xsl:if></title>
+                                <originaltitle><xsl:value-of select="$entitle"/></originaltitle>
+                            </xsl:otherwise>
+                        </xsl:choose>
                         <xsl:copy-of select="url|season|epnum"/>
                     </episode>
                 </xsl:template>                
@@ -115,11 +131,18 @@
 				<xsl:strip-space elements="*"/>
                 <xsl:template match="data">
                     <xsl:variable name="id" select="substring-before(substring-after('$$3', '/xbmc/serial/'), '/')"/>
+                    <xsl:variable name="entitle" select="normalize-space(en)"/>
                     <details>
-                        <title><xsl:value-of select="cz"/><xsl:if test="'$INFO[szeorigname]' = 'true' and not(cz = en)"> (<xsl:value-of select="en"/>)</xsl:if></title>
-                        <originaltitle><xsl:value-of select="en"/></originaltitle>
+                        <xsl:choose>
+                            <xsl:when test="'$INFO[szeengname]' = 'true'">
+                                <title><xsl:value-of select="$entitle"/></title>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <title><xsl:value-of select="normalize-space(cz)"/><xsl:if test="'$INFO[szeorigname]' = 'true' and not(cz = en)"> (<xsl:value-of select="$entitle"/>)</xsl:if></title>
+                                <originaltitle><xsl:value-of select="$entitle"/></originaltitle>
+                            </xsl:otherwise>
+                        </xsl:choose>
                         <xsl:if test="not(imdb = 'tt0000000')">
-                            <id><xsl:value-of select="imdb"/></id>
                             <uniqueid><xsl:attribute name="type">imdb</xsl:attribute><xsl:value-of select="imdb"/></uniqueid>
                         </xsl:if>                            
                         <aired><xsl:value-of select="firstaired"/></aired>
@@ -239,7 +262,10 @@
             </RegExp>
             <!-- not continue if missing tvdbid -->
             <RegExp input="$$18" output="$$5" dest="4">
-                <RegExp input="" output="&lt;url function=&quot;GetTVDBArtParams&quot; cache=&quot;$$18-art-params.json&quot;&gt;https://api.thetvdb.com/series/$$18/images/query/params|Authorization=$$19&lt;/url&gt;" dest="5">
+                <RegExp input="" output="&lt;id&gt;$$18&lt;/id&gt;&lt;uniqueid type=&quot;tvdb&quot; default=&quot;true&quot;&gt;$$18&lt;/uniqueid&gt;" dest="5+">
+                    <expression/>
+                </RegExp>
+                <RegExp input="" output="&lt;url function=&quot;GetTVDBArtParams&quot; cache=&quot;$$18-art-params.json&quot;&gt;https://api.thetvdb.com/series/$$18/images/query/params|Authorization=$$19&lt;/url&gt;" dest="5+">
                     <expression/>
                 </RegExp>
                 <RegExp input="" output="&lt;chain function=&quot;ParseTVDBArt&quot;&gt;&lt;/chain&gt;" dest="5+">

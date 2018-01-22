@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <strings>
-    <string id="10001">Zobrazovat i puvodni nazev serialu (pokud se lisi)</string>
-    <string id="10002">Zobrazovat i puvodni nazev epizody (pokud se lisi)</string>
+    <string id="10001">Zobrazit i puvodni nazev serialu (pokud se lisi)</string>
+    <string id="10002">Zobrazit i puvodni nazev epizody (pokud se lisi)</string>
+    <string id="10003">Zobrazit pouze anglicky/puvodni nazev serialu</string>
+    <string id="10004">Zobrazit pouze anglicky/puvodni nazev epizody</string>
     <string id="10005">Stahovat mezinarodni media z TVDB</string>
     <string id="10006">Preferovany jazyk pro TVDB</string>
     <string id="10010">Stahovat lowres fallback plakat ze serialzone.cz</string>

@@ -1,3 +1,8 @@
+[B]2.4[/B]
+[fixed] element id nyni obsahuje TVDBid pro trakt.tv
+[fixed] normalizace mezer v nazvech
+[added] moznost pouze anglickych/puvodnich nazvu
+
 [B]2.3[/B]
 [changed] XSLT pro parsovani serialzone API
 [changed] TheTVDB API 2.0 pro media

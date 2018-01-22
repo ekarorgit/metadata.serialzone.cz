@@ -2,6 +2,8 @@
 <strings>
     <string id="10001">Show also series original name (if differs)</string>
     <string id="10002">Show also episode original name (if differs)</string>
+    <string id="10003">Show only english/original series name</string>
+    <string id="10004">Show only english/original episode name</string>
     <string id="10005">Download international media from TVDB</string>
     <string id="10006">Preffered language for TVDB</string>
     <string id="10010">Download lowres fallback poster from serialzone.cz</string>
