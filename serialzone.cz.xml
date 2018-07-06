@@ -233,7 +233,7 @@
 	<!-- output: <details><url>...</url></detials> -->
     <GetTVDBArtAuth dest="3" clearbuffers="no">
         <RegExp input="$$1" output="Bearer \1" dest="19">
-            <expression>"token": "(.*)"</expression>
+            <expression>"token":\s*?"(.*)"</expression>
         </RegExp>
         <RegExp input="$$4" output="&lt;details&gt;\1&lt;/details&gt;" dest="3">
             <RegExp input="" output="&lt;url function=&quot;GetTVDBId&quot; cache=&quot;$$17-search-id.json&quot;&gt;https://api.thetvdb.com/search/series?imdbId=$$17|Authorization=$$19&lt;/url&gt;" dest="4">
@@ -251,7 +251,7 @@
 	<!-- output: <details><url>...</url><chain>...</chain></detials> -->
     <GetTVDBId dest="3" clearbuffers="no">
         <RegExp input="$$1" output="\1" dest="18">
-            <expression clear="yes">"id": (\d+),</expression>
+            <expression clear="yes">"id":\s*?(\d+),</expression>
         </RegExp>
         <RegExp input="" output="" dest="10">
             <expression/>
@@ -289,13 +289,13 @@
                 <expression/>
             </RegExp>
             <RegExp conditional="szregional" input="$$1" output="&lt;url function=&quot;LoadTVDBArt&quot; cache=&quot;$$18-art-\1-$$16.json&quot;&gt;https://api.thetvdb.com/series/$$18/images/query?keyType=\1|Authorization=$$19&amp;accept-language=$$16&lt;/url&gt;" dest="4">
-                <expression clear="yes" repeat="yes">"keyType": "([^"]+)"</expression>
+                <expression clear="yes" repeat="yes">"keyType":\s*?"([^"]+)"</expression>
             </RegExp>
             <RegExp input="" output="&lt;chain function=&quot;SwitchLanguage&quot;&gt;en&lt;/chain&gt;" dest="4+">
                 <expression noclean="1"/>
             </RegExp>
             <RegExp input="$$1" output="&lt;url function=&quot;LoadTVDBArt&quot; cache=&quot;$$18-art-\1-en.json&quot;&gt;https://api.thetvdb.com/series/$$18/images/query?keyType=\1|Authorization=$$19&amp;accept-language=en&lt;/url&gt;" dest="4+">
-                <expression repeat="yes">"keyType": "([^"]+)"</expression>
+                <expression repeat="yes">"keyType":\s*?"([^"]+)"</expression>
             </RegExp>
             <expression noclean="1"/>
         </RegExp>
@@ -311,9 +311,9 @@
     <LoadTVDBArt dest="3" clearbuffers="no">		
         <RegExp input="$$1" output="&lt;details&gt;&lt;!-- $$16 \1 loaded --&gt;&lt;/details&gt;" dest="3">
             <RegExp input="$$1" output="&lt;Banner&gt;&lt;id&gt;\1&lt;/id&gt;&lt;keyType&gt;\2&lt;/keyType&gt;&lt;subKey&gt;\3&lt;/subKey&gt;&lt;fileName&gt;\4&lt;/fileName&gt;&lt;resolution&gt;\5&lt;/resolution&gt;&lt;average&gt;\6&lt;/average&gt;&lt;thumbnail&gt;\7&lt;/thumbnail&gt;&lt;language&gt;$$16&lt;/language&gt;&lt;/Banner&gt;" dest="10+">
-                <expression repeat="yes">"id": (\d+),\s+"keyType": "([^"]+)",\s+"subKey": "([^"]*)",\s+"fileName": "([^"]+)",\s+"resolution": "([^"]*)",\s+"ratingsInfo": {\s+"average": (?:([\d\.]+)|null),\s+"count": \d+\s+},\s+"thumbnail": "([^"]+)"</expression>
+                <expression repeat="yes">"id":\s*?(\d+),\s*?"keyType":\s*?"([^"]+)",\s*?"subKey":\s*?"([^"]*)",\s*?"fileName":\s*?"([^"]+)","languageId":\s*?\d+,\s*?"resolution":\s*?"([^"]*)",\s*?"ratingsInfo":\s*?{\s*?"average":\s*?(?:([\d\.]+)|null),\s*?"count":\s*?\d+\s*?},\s*?"thumbnail":\s*?"([^"]*?)"</expression>
             </RegExp>
-            <expression noclean="1">"keyType": "([^"]+)",</expression>
+            <expression noclean="1">"keyType":\s*?"([^"]+)",</expression>
         </RegExp>
     </LoadTVDBArt>
 
