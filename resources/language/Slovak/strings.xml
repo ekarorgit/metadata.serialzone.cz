@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<strings>
+    <string id="10001">Zobraziť aj pôvodný názov seriálu (ak sa líši)</string>
+    <string id="10002">Zobraziť aj pôvodný názov epizódy (ak sa líši)</string>
+    <string id="10003">Zobraziť len pôvodný názov seriálu</string>
+    <string id="10004">Zobraziť len pôvodný názov epizódy</string>
+    <string id="10005">Sťahovať mezinarodné média z TVDB</string>
+    <string id="10006">Preferovaný jazyk pre TVDB</string>
+    <string id="10010">Stahovať plagát s nízkym rozlíšením zo serialzone.cz (fallback)</string>
+</strings>

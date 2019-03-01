@@ -1,3 +1,6 @@
+[B]2.6[/B]
+[added] pridana slovenstina (mvalec)
+
 [B]2.5[/B]
 [fixed] stahovani TVDB art - lepsi parsovani
   
